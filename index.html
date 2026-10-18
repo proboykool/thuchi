@@ -10,7 +10,7 @@
 button,input,select{font:inherit;color:inherit}input,select{width:100%;padding:12px;margin:6px 0;border:1px solid var(--bd);border-radius:10px;background:var(--cd)}
 button{border:0;background:var(--bd);padding:11px 14px;border-radius:10px;cursor:pointer}
 #mb{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;position:sticky;top:0;background:var(--pr);color:#fff;z-index:5}
-#mb button{background:#fff2;color:#fff;width:40px}#mn{font-weight:600}
+#mb button{background:#fff2;color:#fff;width:40px}#mn{font-weight:600;min-width:130px;text-align:center}.ctr{display:flex;align-items:center;gap:4px}#gb svg{display:block;margin:auto}@keyframes sp{to{transform:rotate(360deg)}}#gb.spin svg{animation:sp 1s linear infinite}
 #v{padding:12px;max-width:640px;margin:auto}
 .card{background:var(--cd);border-radius:14px;padding:14px;margin-bottom:10px}
 h1{margin:2px 0 6px;font-size:28px}h3{margin:14px 0 6px}small,.mu{color:var(--mu)}
@@ -18,14 +18,14 @@ h1{margin:2px 0 6px;font-size:28px}h3{margin:14px 0 6px}small,.mu{color:var(--mu
 .ex{color:var(--ex)}.in{color:var(--in)}
 .dh{display:flex;justify-content:space-between;padding:10px 4px 4px;color:var(--mu)}
 .it{display:flex;gap:12px;align-items:center;background:var(--cd);padding:10px 12px;border-radius:12px;margin-bottom:6px}
-.it i,.cc i{font-style:normal;font-size:22px;width:40px;height:40px;display:grid;place-items:center;background:var(--bg);border-radius:50%}
+.it i,.cc i{font-style:normal;font-size:16px;font-weight:600;width:40px;height:40px;display:grid;place-items:center;background:var(--bg);border-radius:50%}
 .it div{flex:1;min-width:0}.it b,.it small{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .bar{height:6px;background:var(--bg);border-radius:3px;margin-top:6px}.bar u{display:block;height:100%;background:var(--pr);border-radius:3px}
 .seg{display:flex;background:var(--cd);border-radius:12px;padding:4px;margin-bottom:10px}.seg button{flex:1;background:none}.seg .on{background:var(--pr);color:#fff}
 .chip{display:inline-block;background:var(--cd);padding:6px 12px;border-radius:20px;margin-bottom:8px}
 .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:8px 0}.cc{text-align:center;padding:6px 2px;border-radius:12px;cursor:pointer}.cc i{margin:auto}.cc small{display:block;font-size:11px}.cc.sel{background:var(--bd);outline:2px solid var(--pr)}
 nav{position:fixed;bottom:0;left:0;right:0;display:flex;background:var(--cd);border-top:1px solid var(--bd);padding:6px 0 calc(6px + env(safe-area-inset-bottom,0));z-index:6}
-nav button{flex:1;background:none;font-size:11px;color:var(--mu)}nav button.on{color:var(--pr);font-weight:700}nav span{display:block;font-size:20px}
+nav button{flex:1;background:none;font-size:11px;color:var(--mu)}nav button.on{color:var(--pr);font-weight:700}nav svg{display:block;margin:0 auto 2px}
 #fab{position:fixed;right:18px;bottom:calc(76px + env(safe-area-inset-bottom,0));width:56px;height:56px;border-radius:50%;background:var(--pr);color:#fff;font-size:30px;z-index:6;box-shadow:0 4px 14px #0004}
 #m{display:none;position:fixed;inset:0;background:#0007;z-index:20;align-items:flex-end}#m.on{display:flex}
 .sh{background:var(--bg);width:100%;max-height:94vh;overflow:auto;border-radius:20px 20px 0 0;padding:14px;max-width:640px;margin:auto}
@@ -35,15 +35,14 @@ nav button{flex:1;background:none;font-size:11px;color:var(--mu)}nav button.on{c
 .chips{display:flex;gap:6px;overflow-x:auto;margin-bottom:8px}.chip{white-space:nowrap;cursor:pointer}.chip.sel{background:var(--pr);color:#fff}
 details{margin:8px 0}summary{cursor:pointer;font-weight:600}details ol{padding-left:18px}a{color:var(--pr)}
 </style></head><body>
-<div id="mb"><button onclick="sh(-1)">‹</button><span id="mn"></span><button onclick="sh(1)">›</button></div>
+<div id="mb"><button id="gb" aria-label="Cài đặt và đồng bộ" onclick="go(tab==='s'?'l':'s')"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button><div class="ctr"><button class="ar" onclick="sh(-1)">‹</button><span id="mn"></span><button class="ar" onclick="sh(1)">›</button></div><span style="width:40px"></span></div>
 <div id="v"></div><div id="m"></div><div id="t"></div>
 <button id="fab" onclick="tab==='d'?openD():openF()">+</button>
 <nav>
-<button data-t="l" onclick="go('l')"><span>📒</span>Sổ</button>
-<button data-t="r" onclick="go('r')"><span>📊</span>Báo cáo</button>
-<button data-t="d" onclick="go('d')"><span>🤝</span>Nợ</button>
-<button data-t="c" onclick="go('c')"><span>🗂️</span>Quản lý</button>
-<button data-t="s" onclick="go('s')"><span>☁️</span>Đồng bộ</button>
+<button data-t="l" onclick="go('l')"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg>Sổ</button>
+<button data-t="r" onclick="go('r')"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>Báo cáo</button>
+<button data-t="d" onclick="go('d')"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 7h13l-3-3M17 17H4l3 3"/></svg>Nợ</button>
+<button data-t="c" onclick="go('c')"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>Quản lý</button>
 </nav>
 <script>
 window.onerror=m=>{const b=document.createElement('div');b.style.cssText='position:fixed;top:0;left:0;right:0;background:#b00;color:#fff;padding:10px;z-index:99;font-size:13px';b.textContent='Lỗi: '+m+' — hãy mở file bằng Chrome.';document.body.appendChild(b)};
@@ -61,9 +60,10 @@ let tab='l',M=today().slice(0,7),rt='e',cf=null,tok=null,F={},wf='',D={},W={},TR
 const save=()=>{ST.set(K,JSON.stringify(S));if(ST.fail&&!ST.w){ST.w=1;toast('Trình duyệt chặn lưu dữ liệu. Hãy mở file bằng Chrome.')}};
 const fmt=n=>(n||0).toLocaleString('vi-VN')+'₫',esc=s=>String(s||'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const cat=id=>S.cats.find(c=>c.id===id)||{n:'Khác',e:'❓'},tp=id=>cat(id).p||id;
-const wn=id=>{const w=S.wallets.find(w=>w.id===id)||{e:'👛',n:'Ví'};return w.e+' '+w.n};
+const wn=id=>(S.wallets.find(w=>w.id===id)||{n:'Ví'}).n;
+const av=n=>`<i style="background:hsl(${[...String(n)].reduce((a,c)=>a+c.charCodeAt(0),0)*47%360} 40% 50%/.22)">${esc(String(n||'?').trim().charAt(0).toUpperCase())}</i>`;
 const balOf=w=>{const t=S.tx.filter(x=>x.w===w.id);return (w.b||0)+sum(t,'i')-sum(t,'e')};
-const wchips=()=>'<div class=chips>'+[['','🌐 Tất cả'],...S.wallets.map(w=>[w.id,w.e+' '+w.n])].map(([i,n])=>`<span class="chip ${wf===i?'sel':''}" onclick="wf='${i}';render()">${esc(n)}</span>`).join('')+'</div>';
+const wchips=()=>'<div class=chips>'+[['','Tất cả'],...S.wallets.map(w=>[w.id,w.n])].map(([i,n])=>`<span class="chip ${wf===i?'sel':''}" onclick="wf='${i}';render()">${esc(n)}</span>`).join('')+'</div>';
 const paid=d=>S.tx.filter(x=>x.db===d.id&&x.pay).reduce((s,x)=>s+x.a,0);
 const addT=x=>S.tx.push({id:Date.now().toString(36)+Math.random().toString(36).slice(2,5),u:Date.now(),...x});
 const trl=x=>{const y=S.tx.find(z=>z.tr===x.tr&&z.id!==x.id),o=y?wn(y.w):'?';return x.t==='e'?wn(x.w)+' → '+o:o+' → '+wn(x.w)};
@@ -76,56 +76,56 @@ const ip=async(k,v)=>{try{const d=await db;return await new Promise(r=>{const t=
 const ig=async k=>{try{const d=await db;return await new Promise(r=>{const q=d.transaction('i').objectStore('i').get(k);q.onsuccess=()=>r(q.result);q.onerror=()=>r()})}catch(e){}};
 function sh(k){let y=+M.slice(0,4),m=+M.slice(5)+k;if(m<1){m=12;y--}if(m>12){m=1;y++}M=y+'-'+String(m).padStart(2,'0');render()}
 function go(t){tab=t;if(t!=='l')cf=null;render();scrollTo(0,0)}
-function render(){$('#mn').textContent='Tháng '+M.slice(5)+'/'+M.slice(0,4);
+function render(){const mo=tab==='l'||tab==='r';$('#mn').textContent=mo?'Tháng '+M.slice(5)+'/'+M.slice(0,4):({d:'Nợ / cho vay',c:'Quản lý',s:'Cài đặt & đồng bộ'})[tab];document.querySelectorAll('.ar').forEach(b=>b.style.visibility=mo?'visible':'hidden');
 document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('on',b.dataset.t===tab));
-$('#mb').style.display=tab==='l'||tab==='r'?'flex':'none';$('#fab').style.display=tab==='s'?'none':'block';
+$('#fab').style.display=tab==='s'?'none':'block';
 $('#v').innerHTML=({l:vList,r:vRep,d:vDebt,c:vCat,s:vSet})[tab]()}
 function vList(){const a=inM(),nd=a.filter(x=>!x.db&&!x.tr),bal=wf?balOf(S.wallets.find(w=>w.id===wf)):S.wallets.reduce((s,w)=>s+balOf(w),0);
 let h=wchips()+`<div class=card><small>Số dư ${wf?wn(wf):'tất cả ví'}</small><h1>${fmt(bal)}</h1><div class=row><span class=in>Thu ${fmt(sum(nd,'i'))}</span><span class=ex>Chi ${fmt(sum(nd,'e'))}</span></div></div>`;
-if(cf)h+=`<div class=chip onclick="cf=null;render()">${cat(cf).e} ${cat(cf).n} ✕</div>`;
+if(cf)h+=`<div class=chip onclick="cf=null;render()">${cat(cf).n} ✕</div>`;
 if(!a.length)h+='<p class=mu>Tháng này chưa có giao dịch. Bấm + để thêm khoản đầu tiên.</p>';
 let last='';a.forEach(x=>{if(x.d!==last){last=x.d;const dy=a.filter(y=>y.d===x.d);h+=`<div class=dh><b>${x.d.slice(8)}/${x.d.slice(5,7)}</b><span>${fmt(sum(dy,'i')-sum(dy,'e'))}</span></div>`}
-h+=`<div class=it onclick="${x.db?`openDD('${x.db}')`:x.tr?`openT('${x.tr}')`:`openF('${x.id}')`}"><i>${cat(x.c).e}</i><div><b>${cat(x.c).p?cat(cat(x.c).p).n+' › ':''}${cat(x.c).n}</b><small>${x.tr?trl(x)+' · ':S.wallets.length>1?wn(x.w)+' · ':''}${esc(x.n)}${x.l||x.f?' 🧾':''}</small></div><span class=${x.t==='e'?'ex':'in'}>${x.t==='e'?'−':'+'}${fmt(x.a)}</span></div>`});
+h+=`<div class=it onclick="${x.db?`openDD('${x.db}')`:x.tr?`openT('${x.tr}')`:`openF('${x.id}')`}">${av(cat(x.c).n)}<div><b>${cat(x.c).p?cat(cat(x.c).p).n+' › ':''}${cat(x.c).n}</b><small>${x.tr?trl(x)+' · ':S.wallets.length>1?wn(x.w)+' · ':''}${esc(x.n)}${x.l||x.f?' · hoá đơn':''}</small></div><span class=${x.t==='e'?'ex':'in'}>${x.t==='e'?'−':'+'}${fmt(x.a)}</span></div>`});
 return h}
 function vRep(){const a=S.tx.filter(x=>x.d.startsWith(M)&&x.t===rt&&!x.db&&!x.tr&&(!wf||x.w===wf)),tot=sum(a,rt),by={};a.forEach(x=>by[tp(x.c)]=(by[tp(x.c)]||0)+x.a);
 const days=new Date(+M.slice(0,4),+M.slice(5),0).getDate(),dv=Array(days).fill(0);a.forEach(x=>dv[+x.d.slice(8)-1]+=x.a);const mx=Math.max(...dv,1);
 let h=wchips()+`<div class=seg><button class="${rt==='e'?'on':''}" onclick="rt='e';render()">Chi tiêu</button><button class="${rt==='i'?'on':''}" onclick="rt='i';render()">Thu nhập</button></div>
 <div class=card><small>Tổng ${rt==='e'?'chi':'thu'} trong tháng</small><h1>${fmt(tot)}</h1><svg viewBox="0 0 ${days*10} 60" width="100%" height="70" preserveAspectRatio="none">${dv.map((v,i)=>`<rect x="${i*10+1}" y="${60-v/mx*58}" width="8" height="${v/mx*58}" rx="2" fill="var(--${rt==='e'?'ex':'in'})"/>`).join('')}</svg><small>Theo ngày · bấm hạng mục bên dưới để xem chi tiết</small></div>`;
 if(!tot)h+='<p class=mu>Chưa có dữ liệu để báo cáo.</p>';
-Object.entries(by).sort((p,q)=>q[1]-p[1]).forEach(([c,v])=>{const p=v/tot*100,sb={};a.filter(x=>tp(x.c)===c&&x.c!==c).forEach(x=>sb[x.c]=(sb[x.c]||0)+x.a);h+=`<div class=it onclick="cf='${c}';tab='l';render()"><i>${cat(c).e}</i><div><b>${cat(c).n}</b><div class=bar><u style="width:${p}%"></u></div>${Object.keys(sb).length?'<small>'+Object.entries(sb).map(([k,q])=>cat(k).n+' '+fmt(q)).join(' · ')+'</small>':''}</div><span>${fmt(v)}<small style="display:inline"> ${p.toFixed(0)}%</small></span></div>`});
+Object.entries(by).sort((p,q)=>q[1]-p[1]).forEach(([c,v])=>{const p=v/tot*100,sb={};a.filter(x=>tp(x.c)===c&&x.c!==c).forEach(x=>sb[x.c]=(sb[x.c]||0)+x.a);h+=`<div class=it onclick="cf='${c}';tab='l';render()">${av(cat(c).n)}<div><b>${cat(c).n}</b><div class=bar><u style="width:${p}%"></u></div>${Object.keys(sb).length?'<small>'+Object.entries(sb).map(([k,q])=>cat(k).n+' '+fmt(q)).join(' · ')+'</small>':''}</div><span>${fmt(v)}<small style="display:inline"> ${p.toFixed(0)}%</small></span></div>`});
 return h}
 function vCat(){const ord=t=>S.cats.filter(c=>c.t===t&&!c.h&&!c.p).flatMap(c=>[c,...S.cats.filter(k=>k.p===c.id)]);
-let h=`<h3>Ví của tôi</h3><div class=grid>${S.wallets.map(w=>`<div class=cc onclick="editW('${w.id}')"><i>${w.e}</i><small>${esc(w.n)}</small><small>${fmt(balOf(w))}</small></div>`).join('')}<div class=cc onclick="editW()"><i>＋</i><small>Thêm ví</small></div></div>`;
-['e','i'].forEach(t=>{h+=`<h3>${t==='e'?'Khoản chi':'Khoản thu'}</h3><div class=grid>`+ord(t).map(c=>`<div class=cc onclick="delCat('${c.id}')"><i>${c.e}</i><small>${c.p?'↳ ':''}${esc(c.n)}</small></div>`).join('')+'</div>'});
-return h+`<div class=card><b>Thêm hạng mục</b><div class=row2><input id=ce placeholder="😀" style="width:64px;flex:none"><input id=cn placeholder="Tên hạng mục"></div><select id=ct><option value=e>Khoản chi<option value=i>Khoản thu</select><select id=cp><option value="">Là hạng mục chính</option>${S.cats.filter(c=>!c.p&&!c.h).map(c=>`<option value="${c.id}">Là con của: ${esc(c.n)}</option>`).join('')}</select><button class=pb style="width:100%" onclick=addCat()>Thêm hạng mục</button><small>Chạm vào hạng mục để xoá. Hạng mục con thừa hưởng loại thu/chi của hạng mục cha.</small></div>`}
-function addCat(){const e=$('#ce').value.trim()||'📌',n=$('#cn').value.trim(),p=$('#cp').value;if(!n)return toast('Nhập tên hạng mục');S.cats.push({id:'c'+Date.now().toString(36),e,n,t:p?cat(p).t:$('#ct').value,...(p?{p}:{})});save();render()}
+let h=`<h3>Ví của tôi</h3><div class=grid>${S.wallets.map(w=>`<div class=cc onclick="editW('${w.id}')">${av(w.n)}<small>${esc(w.n)}</small><small>${fmt(balOf(w))}</small></div>`).join('')}<div class=cc onclick="editW()"><i>＋</i><small>Thêm ví</small></div></div>`;
+['e','i'].forEach(t=>{h+=`<h3>${t==='e'?'Khoản chi':'Khoản thu'}</h3><div class=grid>`+ord(t).map(c=>`<div class=cc onclick="delCat('${c.id}')">${av(c.n)}<small>${c.p?'↳ ':''}${esc(c.n)}</small></div>`).join('')+'</div>'});
+return h+`<div class=card><b>Thêm hạng mục</b><div class=row2><input id=cn placeholder="Tên hạng mục"></div><select id=ct><option value=e>Khoản chi<option value=i>Khoản thu</select><select id=cp><option value="">Là hạng mục chính</option>${S.cats.filter(c=>!c.p&&!c.h).map(c=>`<option value="${c.id}">Là con của: ${esc(c.n)}</option>`).join('')}</select><button class=pb style="width:100%" onclick=addCat()>Thêm hạng mục</button><small>Chạm vào hạng mục để xoá. Hạng mục con thừa hưởng loại thu/chi của hạng mục cha.</small></div>`}
+function addCat(){const e='',n=$('#cn').value.trim(),p=$('#cp').value;if(!n)return toast('Nhập tên hạng mục');S.cats.push({id:'c'+Date.now().toString(36),e,n,t:p?cat(p).t:$('#ct').value,...(p?{p}:{})});save();render()}
 function delCat(id){const c=cat(id);if(S.tx.some(x=>x.c===id)||S.cats.some(k=>k.p===id))return toast('Hạng mục đang được dùng, không xoá được');if(confirm('Xoá hạng mục '+c.n+'?')){S.cats=S.cats.filter(x=>x.id!==id);S.del.push(id);save();render()}}
-function editW(id){const w=id?S.wallets.find(x=>x.id===id):{id:'',e:'👛',n:'',b:0};W={...w};$('#m').className='on';$('#m').innerHTML=`<div class=sh><b>${id?'Sửa ví':'Thêm ví'}</b><div class=row2><input style="width:64px;flex:none" value="${w.e}" oninput="W.e=this.value"><input placeholder="Tên ví (Tiền mặt, Vietcombank…)" value="${esc(w.n)}" oninput="W.n=this.value"></div><input inputmode=numeric placeholder="Số dư ban đầu (₫)" value="${w.b||''}" oninput="W.b=+this.value.replace(/\\D/g,'')"><div class=row2><button onclick=closeF()>Huỷ</button>${id&&S.wallets.length>1?'<button class=dl onclick=delW()>Xoá</button>':''}<button class=pb onclick=saveW()>Lưu</button></div></div>`}
+function editW(id){const w=id?S.wallets.find(x=>x.id===id):{id:'',e:'',n:'',b:0};W={...w};$('#m').className='on';$('#m').innerHTML=`<div class=sh><b>${id?'Sửa ví':'Thêm ví'}</b><div class=row2><input placeholder="Tên ví (Tiền mặt, Vietcombank…)" value="${esc(w.n)}" oninput="W.n=this.value"></div><input inputmode=numeric placeholder="Số dư ban đầu (₫)" value="${w.b||''}" oninput="W.b=+this.value.replace(/\\D/g,'')"><div class=row2><button onclick=closeF()>Huỷ</button>${id&&S.wallets.length>1?'<button class=dl onclick=delW()>Xoá</button>':''}<button class=pb onclick=saveW()>Lưu</button></div></div>`}
 function saveW(){if(!W.n.trim())return toast('Nhập tên ví');if(!W.id){W.id='w'+Date.now().toString(36);S.wallets.push(W)}else S.wallets=S.wallets.map(x=>x.id===W.id?W:x);save();closeF();render()}
 function delW(){if(S.tx.some(x=>x.w===W.id)||S.debts.some(d=>d.w===W.id))return toast('Ví đang có giao dịch, không xoá được');S.wallets=S.wallets.filter(x=>x.id!==W.id);S.del.push(W.id);if(wf===W.id)wf='';save();closeF();render()}
 function openT(id){const o=id?S.tx.filter(x=>x.tr===id):[],a=o.find(x=>x.t==='e'),b=o.find(x=>x.t==='i'),f=wf||S.wallets[0].id;
 TR=a&&b?{id,a:a.a,d:a.d,n:a.n||'',f:a.w,t:b.w}:{id:'',a:0,d:today(),n:'',f,t:(S.wallets.find(w=>w.id!==f)||{}).id};drawT()}
-function drawT(){const sel=k=>`<select onchange="TR.${k}=this.value">${S.wallets.map(w=>`<option value="${w.id}" ${TR[k]===w.id?'selected':''}>${w.e} ${esc(w.n)}</option>`).join('')}</select>`;
+function drawT(){const sel=k=>`<select onchange="TR.${k}=this.value">${S.wallets.map(w=>`<option value="${w.id}" ${TR[k]===w.id?'selected':''}>${esc(w.n)}</option>`).join('')}</select>`;
 $('#m').className='on';$('#m').innerHTML=`<div class=sh><b>${TR.id?'Sửa chuyển tiền':'Chuyển tiền giữa các ví'}</b><small style="display:block">Từ ví</small>${sel('f')}<small>Đến ví</small>${sel('t')}<input inputmode=numeric placeholder="Số tiền (₫)" value="${TR.a||''}" oninput="TR.a=+this.value.replace(/\\D/g,'')"><input type=date value="${TR.d}" onchange="TR.d=this.value"><input placeholder="Ghi chú" value="${esc(TR.n)}" oninput="TR.n=this.value"><div class=row2><button onclick=closeF()>Huỷ</button>${TR.id?'<button class=dl onclick=delTR()>Xoá</button>':''}<button class=pb onclick=saveTR()>Lưu</button></div></div>`}
 function saveTR(){if(!TR.a)return toast('Nhập số tiền');if(TR.f===TR.t)return toast('Chọn hai ví khác nhau');
 const id=TR.id||'t'+Date.now().toString(36);S.tx.filter(x=>x.tr===id).forEach(x=>S.del.push(x.id));S.tx=S.tx.filter(x=>x.tr!==id);
 addT({d:TR.d,t:'e',c:'ck',a:TR.a,n:TR.n,w:TR.f,tr:id});addT({d:TR.d,t:'i',c:'cn',a:TR.a,n:TR.n,w:TR.t,tr:id});save();closeF();render()}
 function delTR(){if(!confirm('Xoá lệnh chuyển tiền? Cả ví gửi và ví nhận sẽ được hoàn lại.'))return;S.tx.filter(x=>x.tr===TR.id).forEach(x=>S.del.push(x.id));S.tx=S.tx.filter(x=>x.tr!==TR.id);save();closeF();render()}
 function vDebt(){const L=S.debts.filter(d=>d.k==='l'),B=S.debts.filter(d=>d.k==='b'),rem=a=>a.reduce((s,d)=>s+d.a-paid(d),0);
-let h=`<div class=card><div class=row><span>🤝 Người khác nợ tôi</span><span class=in>${fmt(rem(L))}</span></div><div class=row><span>🙏 Tôi đang nợ</span><span class=ex>${fmt(rem(B))}</span></div></div>`;
+let h=`<div class=card><div class=row><span>Người khác nợ tôi</span><span class=in>${fmt(rem(L))}</span></div><div class=row><span>Tôi đang nợ</span><span class=ex>${fmt(rem(B))}</span></div></div>`;
 if(!S.debts.length)h+='<p class=mu>Chưa có khoản nợ nào. Bấm + để ghi cho vay hoặc đi vay.</p>';
 S.debts.slice().sort((a,b)=>(paid(a)>=a.a)-(paid(b)>=b.a)||(a.due||'9').localeCompare(b.due||'9')).forEach(d=>{const p=paid(d),r=d.a-p,od=r>0&&d.due&&d.due<today();
-h+=`<div class=it onclick="openDD('${d.id}')"><i>${d.k==='l'?'🤝':'🙏'}</i><div><b>${esc(d.p)}</b><div class=bar><u style="width:${Math.min(100,p/d.a*100)}%"></u></div><small>${r<=0?'Đã tất toán':'Còn '+fmt(r)+' / '+fmt(d.a)}${d.due?' · hạn '+d.due.slice(8)+'/'+d.due.slice(5,7):''}${od?' ⚠️ quá hạn':''}</small></div><span class=${d.k==='l'?'in':'ex'}>${d.k==='l'?'Cho vay':'Đi vay'}</span></div>`});return h}
+h+=`<div class=it onclick="openDD('${d.id}')">${av(d.p)}<div><b>${esc(d.p)}</b><div class=bar><u style="width:${Math.min(100,p/d.a*100)}%"></u></div><small>${r<=0?'Đã tất toán':'Còn '+fmt(r)+' / '+fmt(d.a)}${d.due?' · hạn '+d.due.slice(8)+'/'+d.due.slice(5,7):''}${od?' · quá hạn':''}</small></div><span class=${d.k==='l'?'in':'ex'}>${d.k==='l'?'Cho vay':'Đi vay'}</span></div>`});return h}
 function openD(){D={k:'l',p:'',a:0,d:today(),due:'',n:'',w:wf||S.wallets[0].id};drawD()}
 function drawD(){const m=$('#m');m.className='on';m.innerHTML=`<div class=sh><div class=seg><button class="${D.k==='l'?'on':''}" onclick="D.k='l';drawD()">Cho vay</button><button class="${D.k==='b'?'on':''}" onclick="D.k='b';drawD()">Đi vay</button></div>
 <input placeholder="${D.k==='l'?'Người vay':'Người cho vay'}" value="${esc(D.p)}" oninput="D.p=this.value">
 <input inputmode=numeric placeholder="Số tiền (₫)" value="${D.a||''}" oninput="D.a=+this.value.replace(/\\D/g,'')">
-<select onchange="D.w=this.value">${S.wallets.map(w=>`<option value="${w.id}" ${D.w===w.id?'selected':''}>${w.e} ${esc(w.n)}</option>`).join('')}</select>
+<select onchange="D.w=this.value">${S.wallets.map(w=>`<option value="${w.id}" ${D.w===w.id?'selected':''}>${esc(w.n)}</option>`).join('')}</select>
 <small>Ngày vay</small><input type=date value="${D.d}" onchange="D.d=this.value"><small>Hạn trả (không bắt buộc)</small><input type=date value="${D.due}" onchange="D.due=this.value"><input placeholder="Ghi chú" value="${esc(D.n)}" oninput="D.n=this.value">
 <div class=row2><button onclick=closeF()>Huỷ</button><button class=pb onclick=saveD()>Lưu</button></div></div>`}
 function saveD(){if(!D.p.trim()||!D.a)return toast('Nhập tên người và số tiền');D.id='d'+Date.now().toString(36);S.debts.push(D);addT({d:D.d,t:D.k==='l'?'e':'i',c:D.k==='l'?'dv':'dm',a:D.a,n:(D.k==='l'?'Cho '+D.p+' vay':'Vay '+D.p)+(D.n?' - '+D.n:''),w:D.w,db:D.id});save();closeF();render()}
 function openDD(id){const d=S.debts.find(x=>x.id===id),ps=S.tx.filter(x=>x.db===id&&x.pay).sort((a,b)=>a.d.localeCompare(b.d)),r=d.a-paid(d);D={id,pa:r>0?r:0,pd:today()};
-$('#m').className='on';$('#m').innerHTML=`<div class=sh><h3 style="margin-top:0">${d.k==='l'?'🤝 Cho '+esc(d.p)+' vay':'🙏 Vay '+esc(d.p)}</h3><div class=card><div class=row><span>Gốc</span><span>${fmt(d.a)}</span></div><div class=row><span>${d.k==='l'?'Đã thu':'Đã trả'}</span><span>${fmt(paid(d))}</span></div><div class=row><span>Còn lại</span><span class=${d.k==='l'?'in':'ex'}>${fmt(r)}</span></div><small>${wn(d.w)}${d.due?' · hạn '+d.due:''}${d.n?' · '+esc(d.n):''}</small></div>
+$('#m').className='on';$('#m').innerHTML=`<div class=sh><h3 style="margin-top:0">${d.k==='l'?'Cho '+esc(d.p)+' vay':'Vay '+esc(d.p)}</h3><div class=card><div class=row><span>Gốc</span><span>${fmt(d.a)}</span></div><div class=row><span>${d.k==='l'?'Đã thu':'Đã trả'}</span><span>${fmt(paid(d))}</span></div><div class=row><span>Còn lại</span><span class=${d.k==='l'?'in':'ex'}>${fmt(r)}</span></div><small>${wn(d.w)}${d.due?' · hạn '+d.due:''}${d.n?' · '+esc(d.n):''}</small></div>
 ${ps.map(x=>`<div class=dh><span>${x.d.slice(8)}/${x.d.slice(5,7)}/${x.d.slice(0,4)}</span><span>${fmt(x.a)} <a onclick="delPay('${x.id}','${id}')">✕</a></span></div>`).join('')}
 ${r>0?`<h3>${d.k==='l'?'Ghi thu nợ':'Ghi trả nợ'}</h3><input inputmode=numeric value="${r}" oninput="D.pa=+this.value.replace(/\\D/g,'')"><input type=date value="${D.pd}" onchange="D.pd=this.value"><button class=pb style="width:100%" onclick="payD('${id}')">Lưu khoản ${d.k==='l'?'thu':'trả'}</button>`:''}
 <div class=row2 style="margin-top:10px"><button onclick=closeF()>Đóng</button><button class=dl onclick="delD('${id}')">Xoá khoản nợ</button></div></div>`}
@@ -133,7 +133,7 @@ function payD(id){const d=S.debts.find(x=>x.id===id);if(!D.pa)return toast('Nh�
 function delPay(t,id){S.tx=S.tx.filter(x=>x.id!==t);S.del.push(t);save();openDD(id);render()}
 function delD(id){if(!confirm('Xoá khoản nợ và mọi giao dịch liên quan?'))return;S.tx.filter(x=>x.db===id).forEach(x=>S.del.push(x.id));S.tx=S.tx.filter(x=>x.db!==id);S.debts=S.debts.filter(x=>x.id!==id);S.del.push(id);save();closeF();render()}
 function vSet(){const s=S.set;return `<div class=card><b>Google (Drive + Sheets)</b><small style="display:block">Client ID OAuth (Web) từ Google Cloud Console.</small><input placeholder="xxxx.apps.googleusercontent.com" value="${esc(s.cid)}" onchange="S.set.cid=this.value.trim();save()">
-<small style="display:block;margin-top:8px">Google Sheet dùng chung giữa các thiết bị (để trống: tự tìm hoặc tạo mới)</small><input placeholder="Dán link hoặc ID Google Sheet" value="${esc(s.sid)}" onchange="setSid(this.value)"><button class=pb style="width:100%" onclick=sync()>☁️ Đồng bộ ngay</button>${s.sid?`<p><a href="https://docs.google.com/spreadsheets/d/${s.sid}" target=_blank>Mở Google Sheet</a></p>`:''}
+<small style="display:block;margin-top:8px">Google Sheet dùng chung giữa các thiết bị (để trống: tự tìm hoặc tạo mới)</small><input placeholder="Dán link hoặc ID Google Sheet" value="${esc(s.sid)}" onchange="setSid(this.value)"><button class=pb style="width:100%" onclick=sync()>Đồng bộ ngay</button>${s.sid?`<p><a href="https://docs.google.com/spreadsheets/d/${s.sid}" target=_blank>Mở Google Sheet</a></p>`:''}
 <details><summary>Hướng dẫn kết nối Google</summary><ol><li>Vào console.cloud.google.com, tạo Project mới.</li><li>APIs &amp; Services → Library: bật <b>Google Drive API</b> và <b>Google Sheets API</b>.</li><li>Google Auth Platform (OAuth consent screen): chọn External, điền tên ứng dụng và email, thêm email của bạn vào <b>Test users</b>.</li><li>Credentials → Create credentials → OAuth client ID → Web application.</li><li>Authorized JavaScript origins, dán đúng: <b>${location.origin}</b></li><li>Copy Client ID dán vào ô trên, bấm Đồng bộ ngay.</li></ol></details><small>Dữ liệu ghi vào Google Sheet “Sổ Thu Chi”; ảnh hoá đơn lưu trong thư mục Drive “SoThuChi_HoaDon”.</small></div>
 <div class=card><b>AI đọc hoá đơn</b><select onchange="S.set.pv=this.value;save();render()"><option value=g ${pv()==='g'?'selected':''}>Google Gemini (có gói miễn phí)</option><option value=c ${pv()==='c'?'selected':''}>Claude (Anthropic)</option></select>
 ${pv()==='c'?`<input type=password placeholder="Anthropic API key (sk-ant-...)" value="${esc(s.ak)}" onchange="S.set.ak=this.value.trim();save()">`:`<input type=password placeholder="Gemini API key (AIza...)" value="${esc(s.gk)}" onchange="S.set.gk=this.value.trim();save()"><input placeholder="Model (mặc định gemini-3.6-flash)" value="${esc(s.gm)}" onchange="S.set.gm=this.value.trim();save()"><small>Lấy key tại aistudio.google.com/apikey. Key lưu trong máy của bạn.</small>`}</div>
@@ -145,12 +145,12 @@ async function openF(id){const x=id&&S.tx.find(t=>t.id===id);F=x?{...x}:{id:'',t
 function closeF(){$('#m').className=''}
 function drawF(){const m=$('#m');m.className='on';
 m.innerHTML=`<div class=sh><div class=seg><button class="${F.t==='e'?'on':''}" onclick="F.t='e';F.c='';drawF()">Chi tiêu</button><button class="${F.t==='i'?'on':''}" onclick="F.t='i';F.c='';drawF()">Thu nhập</button>${S.wallets.length>1&&!F.id?'<button onclick="openT()">Chuyển ví</button>':''}</div>
-<button class=sc onclick="$('#fi').click()">📷 Quét hoá đơn bằng AI</button><input id=fi type=file accept="image/*" hidden onchange="scan(this.files[0])">
+<button class=sc onclick="$('#fi').click()">Quét hoá đơn bằng AI</button><input id=fi type=file accept="image/*" hidden onchange="scan(this.files[0])">
 ${F.img?`<img class=pv src="${F.img}">`:''}${!F.img&&F.l?`<p><a href="${esc(F.l)}" target=_blank>Xem hoá đơn trên Drive</a></p>`:''}
 <input inputmode=numeric placeholder="Số tiền (₫)" value="${F.a||''}" oninput="F.a=+this.value.replace(/\\D/g,'')">
-<select onchange="F.w=this.value">${S.wallets.map(w=>`<option value="${w.id}" ${F.w===w.id?'selected':''}>${w.e} ${esc(w.n)}</option>`).join('')}</select>
-<div class=grid>${S.cats.filter(c=>c.t===F.t&&!c.h&&!c.p).map(c=>`<div class="cc ${tp(F.c)===c.id?'sel':''}" onclick="F.c='${c.id}';drawF()"><i>${c.e}</i><small>${esc(c.n)}</small></div>`).join('')}</div>
-${F.c&&S.cats.some(k=>k.p===tp(F.c))?`<small>Hạng mục con</small><div class=grid>${S.cats.filter(k=>k.p===tp(F.c)).map(k=>`<div class="cc ${F.c===k.id?'sel':''}" onclick="F.c='${k.id}';drawF()"><i>${k.e}</i><small>${esc(k.n)}</small></div>`).join('')}</div>`:''}
+<select onchange="F.w=this.value">${S.wallets.map(w=>`<option value="${w.id}" ${F.w===w.id?'selected':''}>${esc(w.n)}</option>`).join('')}</select>
+<div class=grid>${S.cats.filter(c=>c.t===F.t&&!c.h&&!c.p).map(c=>`<div class="cc ${tp(F.c)===c.id?'sel':''}" onclick="F.c='${c.id}';drawF()">${av(c.n)}<small>${esc(c.n)}</small></div>`).join('')}</div>
+${F.c&&S.cats.some(k=>k.p===tp(F.c))?`<small>Hạng mục con</small><div class=grid>${S.cats.filter(k=>k.p===tp(F.c)).map(k=>`<div class="cc ${F.c===k.id?'sel':''}" onclick="F.c='${k.id}';drawF()">${av(k.n)}<small>${esc(k.n)}</small></div>`).join('')}</div>`:''}
 <input type=date value="${F.d}" onchange="F.d=this.value"><input placeholder="Ghi chú" value="${esc(F.n)}" oninput="F.n=this.value">
 <div class=row2><button onclick=closeF()>Huỷ</button>${F.id?'<button class=dl onclick=delT()>Xoá</button>':''}<button class=pb onclick=saveT()>Lưu</button></div></div>`}
 async function shrink(f){const b=await createImageBitmap(f),k=Math.min(1,1280/Math.max(b.width,b.height)),c=document.createElement('canvas');c.width=b.width*k;c.height=b.height*k;c.getContext('2d').drawImage(b,0,0,c.width,c.height);return c.toDataURL('image/jpeg',.75)}
@@ -181,7 +181,7 @@ if(window.google&&google.accounts)go();else{const s=document.createElement('scri
 const G=async(u,o={})=>{const r=await fetch(u,{method:o.method,headers:{Authorization:'Bearer '+tok,...(o.json?{'Content-Type':'application/json'}:{}),...o.headers},body:o.json?JSON.stringify(o.json):o.body});if(!r.ok){const t=await r.text();let m=t;try{m=JSON.parse(t).error.message}catch(e){}throw new Error(m)}return r.json()};
 async function findF(n,mt){return((await G('https://www.googleapis.com/drive/v3/files?orderBy=createdTime&pageSize=1&fields=files(id)&q='+encodeURIComponent("name='"+n+"' and mimeType='"+mt+"' and trashed=false"))).files||[])[0]}
 function setSid(v){S.set.sid=(v.match(/\/d\/([\w-]+)/)||[0,v.trim()])[1];save();render()}
-async function sync(){try{await auth();toast('Đang đồng bộ…');const st=S.set;
+async function sync(){try{await auth();toast('Đang đồng bộ…');$('#gb').classList.add('spin');const st=S.set;
 if(!st.sid){const f=await findF('Sổ Thu Chi','application/vnd.google-apps.spreadsheet');st.sid=f?f.id:(await G('https://sheets.googleapis.com/v4/spreadsheets',{method:'POST',json:{properties:{title:'Sổ Thu Chi'},sheets:['GiaoDich','HangMuc','Vi','No','Xoa'].map(title=>({properties:{title}}))}})).spreadsheetId}
 if(!st.fid){const f=await findF('SoThuChi_HoaDon','application/vnd.google-apps.folder');st.fid=f?f.id:(await G('https://www.googleapis.com/drive/v3/files',{method:'POST',json:{name:'SoThuChi_HoaDon',mimeType:'application/vnd.google-apps.folder'}})).id}
 const have=(await G('https://sheets.googleapis.com/v4/spreadsheets/'+st.sid+'?fields=sheets.properties.title')).sheets.map(x=>x.properties.title),need=['Vi','No','Xoa'].filter(n=>!have.includes(n));
@@ -202,6 +202,6 @@ const r=await G('https://www.googleapis.com/upload/drive/v3/files?uploadType=mul
 const rows=[['ID','Ngày','Loại','Mã HM','Hạng mục','Số tiền','Ghi chú','Link hoá đơn','File ID','Mã ví','Mã nợ','Trả nợ','Mã chuyển','Cập nhật'],...S.tx.sort((a,b)=>a.d.localeCompare(b.d)).map(x=>[x.id,x.d,x.t==='e'?'Chi':'Thu',x.c,cat(x.c).n,x.a,x.n||'',x.l||'',x.f||'',x.w||'',x.db||'',x.pay?1:'',x.tr||'',x.u||0])];
 const cr=[['ID','Emoji','Tên','Loại','Mã cha'],...S.cats.map(c=>[c.id,c.e,c.n,c.t==='e'?'Chi':'Thu',c.p||''])],wr=[['ID','Emoji','Tên ví','Số dư đầu'],...S.wallets.map(w=>[w.id,w.e,w.n,w.b||0])],dr=[['ID','Người','Loại','Số tiền','Ngày','Hạn','Ghi chú','Mã ví'],...S.debts.map(d=>[d.id,d.p,d.k==='l'?'Cho vay':'Đi vay',d.a,d.d,d.due||'',d.n||'',d.w])];
 for(const[n,v]of[['GiaoDich',rows],['HangMuc',cr],['Vi',wr],['No',dr],['Xoa',[['ID'],...S.del.map(i=>[i])]]]){await G(V+n+'!A:N:clear',{method:'POST',json:{}});await G(V+n+'!A1?valueInputOption=RAW',{method:'PUT',json:{values:v}})}
-save();render();toast('Đồng bộ xong ✓ '+S.tx.length+' giao dịch')}catch(e){tok=null;toast(typeof e==='string'?e:'Lỗi đồng bộ: '+String(e.message||e).slice(0,110));console.error(e)}}
+save();render();$('#gb').classList.remove('spin');toast('Đồng bộ xong ✓ '+S.tx.length+' giao dịch')}catch(e){$('#gb').classList.remove('spin');tok=null;toast(typeof e==='string'?e:'Lỗi đồng bộ: '+String(e.message||e).slice(0,110));console.error(e)}}
 render();
 </script></body></html>
