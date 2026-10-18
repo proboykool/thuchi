@@ -55,7 +55,7 @@ SB('nh','🍽️','Nhà hàng','an'),SB('as','🥖','Ăn sáng','an'),SB('dien',
 {id:'dv',e:'🤝',n:'Cho vay',t:'e',h:1},{id:'dt',e:'💵',n:'Thu nợ',t:'i',h:1},{id:'dm',e:'🙏',n:'Đi vay',t:'i',h:1},{id:'dtr',e:'💸',n:'Trả nợ',t:'e',h:1},{id:'ck',e:'📤',n:'Chuyển đi',t:'e',h:1},{id:'cn',e:'📥',n:'Chuyển đến',t:'i',h:1}];
 let S=JSON.parse(ST.get(K)||'null')||{tx:[],cats:DEF,set:{},del:[]};
 S.wallets=S.wallets||[{id:'w1',e:'💵',n:'Tiền mặt',b:0}];S.debts=S.debts||[];
-DEF.filter(c=>c.h).forEach(c=>{if(!S.cats.some(x=>x.id===c.id))S.cats.push(c)});S.tx.forEach(x=>{if(!x.w)x.w=S.wallets[0].id});
+DEF.filter(c=>c.h).forEach(c=>{if(!S.cats.some(x=>x.id===c.id))S.cats.push(c)});S.tx.forEach(x=>{if(!x.w)x.w=S.wallets[0].id;if(x.u===undefined)x.u=0});
 const today=()=>new Date(Date.now()-new Date().getTimezoneOffset()*6e4).toISOString().slice(0,10);
 let tab='l',M=today().slice(0,7),rt='e',cf=null,tok=null,F={},wf='',D={},W={},TR={};
 const save=()=>{ST.set(K,JSON.stringify(S));if(ST.fail&&!ST.w){ST.w=1;toast('Trình duyệt chặn lưu dữ liệu. Hãy mở file bằng Chrome.')}};
@@ -65,7 +65,7 @@ const wn=id=>{const w=S.wallets.find(w=>w.id===id)||{e:'👛',n:'Ví'};return w.
 const balOf=w=>{const t=S.tx.filter(x=>x.w===w.id);return (w.b||0)+sum(t,'i')-sum(t,'e')};
 const wchips=()=>'<div class=chips>'+[['','🌐 Tất cả'],...S.wallets.map(w=>[w.id,w.e+' '+w.n])].map(([i,n])=>`<span class="chip ${wf===i?'sel':''}" onclick="wf='${i}';render()">${esc(n)}</span>`).join('')+'</div>';
 const paid=d=>S.tx.filter(x=>x.db===d.id&&x.pay).reduce((s,x)=>s+x.a,0);
-const addT=x=>S.tx.push({id:Date.now().toString(36)+Math.random().toString(36).slice(2,5),...x});
+const addT=x=>S.tx.push({id:Date.now().toString(36)+Math.random().toString(36).slice(2,5),u:Date.now(),...x});
 const trl=x=>{const y=S.tx.find(z=>z.tr===x.tr&&z.id!==x.id),o=y?wn(y.w):'?';return x.t==='e'?wn(x.w)+' → '+o:o+' → '+wn(x.w)};
 const sum=(a,t)=>a.filter(x=>x.t===t).reduce((s,x)=>s+x.a,0);
 const inM=()=>S.tx.filter(x=>x.d.startsWith(M)&&(!wf||x.w===wf)&&(!cf||tp(x.c)===cf)).sort((a,b)=>b.d.localeCompare(a.d)||b.id.localeCompare(a.id));
@@ -133,7 +133,7 @@ function payD(id){const d=S.debts.find(x=>x.id===id);if(!D.pa)return toast('Nh�
 function delPay(t,id){S.tx=S.tx.filter(x=>x.id!==t);S.del.push(t);save();openDD(id);render()}
 function delD(id){if(!confirm('Xoá khoản nợ và mọi giao dịch liên quan?'))return;S.tx.filter(x=>x.db===id).forEach(x=>S.del.push(x.id));S.tx=S.tx.filter(x=>x.db!==id);S.debts=S.debts.filter(x=>x.id!==id);S.del.push(id);save();closeF();render()}
 function vSet(){const s=S.set;return `<div class=card><b>Google (Drive + Sheets)</b><small style="display:block">Client ID OAuth (Web) từ Google Cloud Console.</small><input placeholder="xxxx.apps.googleusercontent.com" value="${esc(s.cid)}" onchange="S.set.cid=this.value.trim();save()">
-<button class=pb style="width:100%" onclick=sync()>☁️ Đồng bộ ngay</button>${s.sid?`<p><a href="https://docs.google.com/spreadsheets/d/${s.sid}" target=_blank>Mở Google Sheet</a></p>`:''}
+<small style="display:block;margin-top:8px">Google Sheet dùng chung giữa các thiết bị (để trống: tự tìm hoặc tạo mới)</small><input placeholder="Dán link hoặc ID Google Sheet" value="${esc(s.sid)}" onchange="setSid(this.value)"><button class=pb style="width:100%" onclick=sync()>☁️ Đồng bộ ngay</button>${s.sid?`<p><a href="https://docs.google.com/spreadsheets/d/${s.sid}" target=_blank>Mở Google Sheet</a></p>`:''}
 <details><summary>Hướng dẫn kết nối Google</summary><ol><li>Vào console.cloud.google.com, tạo Project mới.</li><li>APIs &amp; Services → Library: bật <b>Google Drive API</b> và <b>Google Sheets API</b>.</li><li>Google Auth Platform (OAuth consent screen): chọn External, điền tên ứng dụng và email, thêm email của bạn vào <b>Test users</b>.</li><li>Credentials → Create credentials → OAuth client ID → Web application.</li><li>Authorized JavaScript origins, dán đúng: <b>${location.origin}</b></li><li>Copy Client ID dán vào ô trên, bấm Đồng bộ ngay.</li></ol></details><small>Dữ liệu ghi vào Google Sheet “Sổ Thu Chi”; ảnh hoá đơn lưu trong thư mục Drive “SoThuChi_HoaDon”.</small></div>
 <div class=card><b>AI đọc hoá đơn</b><select onchange="S.set.pv=this.value;save();render()"><option value=g ${pv()==='g'?'selected':''}>Google Gemini (có gói miễn phí)</option><option value=c ${pv()==='c'?'selected':''}>Claude (Anthropic)</option></select>
 ${pv()==='c'?`<input type=password placeholder="Anthropic API key (sk-ant-...)" value="${esc(s.ak)}" onchange="S.set.ak=this.value.trim();save()">`:`<input type=password placeholder="Gemini API key (AIza...)" value="${esc(s.gk)}" onchange="S.set.gk=this.value.trim();save()"><input placeholder="Model (mặc định gemini-3.6-flash)" value="${esc(s.gm)}" onchange="S.set.gm=this.value.trim();save()"><small>Lấy key tại aistudio.google.com/apikey. Key lưu trong máy của bạn.</small>`}</div>
@@ -170,7 +170,7 @@ const c=S.cats.find(c=>c.t==='e'&&c.n===o.category);F.c=c?c.id:'kh';F.n=[o.merch
 drawF();toast('Đã tự điền từ hoá đơn ✓')}catch(e){toast('Không đọc được hoá đơn: '+String(e.message||e).slice(0,90));console.error(e)}}
 async function saveT(){if(!F.a)return toast('Nhập số tiền');if(!F.c)return toast('Chọn hạng mục');
 if(!F.id)F.id=Date.now().toString(36)+Math.random().toString(36).slice(2,5);
-const x={id:F.id,d:F.d,t:F.t,c:F.c,a:F.a,n:F.n,l:F.l,f:F.f,w:F.w};
+const x={id:F.id,d:F.d,t:F.t,c:F.c,a:F.a,n:F.n,l:F.l,f:F.f,w:F.w,u:Date.now()};
 if(F.imgNew){await ip(x.id,F.img);x.f='';x.l=''}
 S.tx=S.tx.filter(t=>t.id!==x.id);S.tx.push(x);if(!x.d.startsWith(M))M=x.d.slice(0,7);save();closeF();render()}
 async function delT(){if(!confirm('Xoá giao dịch này?'))return;S.tx=S.tx.filter(t=>t.id!==F.id);S.del.push(F.id);await ip(F.id);save();closeF();render()}
@@ -178,26 +178,30 @@ async function delT(){if(!confirm('Xoá giao dịch này?'))return;S.tx=S.tx.fil
 function auth(){return new Promise((ok,no)=>{if(tok)return ok();if(!S.set.cid)return no('Chưa nhập Client ID');
 const go=()=>google.accounts.oauth2.initTokenClient({client_id:S.set.cid,scope:'https://www.googleapis.com/auth/drive.file https://www.googleapis.com/auth/spreadsheets',callback:r=>{if(r.access_token){tok=r.access_token;setTimeout(()=>tok=null,3e6);ok()}else no('Đăng nhập Google bị từ chối')}}).requestAccessToken();
 if(window.google&&google.accounts)go();else{const s=document.createElement('script');s.src='https://accounts.google.com/gsi/client';s.onload=go;s.onerror=()=>no('Không tải được Google');document.head.appendChild(s)}})}
-const G=async(u,o={})=>{const r=await fetch(u,{method:o.method,headers:{Authorization:'Bearer '+tok,...(o.json?{'Content-Type':'application/json'}:{}),...o.headers},body:o.json?JSON.stringify(o.json):o.body});if(!r.ok)throw new Error(await r.text());return r.json()};
+const G=async(u,o={})=>{const r=await fetch(u,{method:o.method,headers:{Authorization:'Bearer '+tok,...(o.json?{'Content-Type':'application/json'}:{}),...o.headers},body:o.json?JSON.stringify(o.json):o.body});if(!r.ok){const t=await r.text();let m=t;try{m=JSON.parse(t).error.message}catch(e){}throw new Error(m)}return r.json()};
+async function findF(n,mt){return((await G('https://www.googleapis.com/drive/v3/files?orderBy=createdTime&pageSize=1&fields=files(id)&q='+encodeURIComponent("name='"+n+"' and mimeType='"+mt+"' and trashed=false"))).files||[])[0]}
+function setSid(v){S.set.sid=(v.match(/\/d\/([\w-]+)/)||[0,v.trim()])[1];save();render()}
 async function sync(){try{await auth();toast('Đang đồng bộ…');const st=S.set;
-if(!st.sid)st.sid=(await G('https://sheets.googleapis.com/v4/spreadsheets',{method:'POST',json:{properties:{title:'Sổ Thu Chi'},sheets:[{properties:{title:'GiaoDich'}},{properties:{title:'HangMuc'}},{properties:{title:'Vi'}},{properties:{title:'No'}}]}})).spreadsheetId;
-if(!st.fid)st.fid=(await G('https://www.googleapis.com/drive/v3/files',{method:'POST',json:{name:'SoThuChi_HoaDon',mimeType:'application/vnd.google-apps.folder'}})).id;
-const have=(await G('https://sheets.googleapis.com/v4/spreadsheets/'+st.sid+'?fields=sheets.properties.title')).sheets.map(x=>x.properties.title),need=['Vi','No'].filter(n=>!have.includes(n));
+if(!st.sid){const f=await findF('Sổ Thu Chi','application/vnd.google-apps.spreadsheet');st.sid=f?f.id:(await G('https://sheets.googleapis.com/v4/spreadsheets',{method:'POST',json:{properties:{title:'Sổ Thu Chi'},sheets:['GiaoDich','HangMuc','Vi','No','Xoa'].map(title=>({properties:{title}}))}})).spreadsheetId}
+if(!st.fid){const f=await findF('SoThuChi_HoaDon','application/vnd.google-apps.folder');st.fid=f?f.id:(await G('https://www.googleapis.com/drive/v3/files',{method:'POST',json:{name:'SoThuChi_HoaDon',mimeType:'application/vnd.google-apps.folder'}})).id}
+const have=(await G('https://sheets.googleapis.com/v4/spreadsheets/'+st.sid+'?fields=sheets.properties.title')).sheets.map(x=>x.properties.title),need=['Vi','No','Xoa'].filter(n=>!have.includes(n));
 if(need.length)await G('https://sheets.googleapis.com/v4/spreadsheets/'+st.sid+':batchUpdate',{method:'POST',json:{requests:need.map(title=>({addSheet:{properties:{title}}}))}});
 const V='https://sheets.googleapis.com/v4/spreadsheets/'+st.sid+'/values/';
+((await G(V+'Xoa!A2:A')).values||[]).forEach(r=>{if(r[0]&&!S.del.includes(r[0]))S.del.push(r[0])});
+S.tx=S.tx.filter(x=>!S.del.includes(x.id));S.debts=S.debts.filter(x=>!S.del.includes(x.id));S.cats=S.cats.filter(x=>!S.del.includes(x.id));{const kw=S.wallets.filter(w=>!S.del.includes(w.id));if(kw.length)S.wallets=kw}
 // kéo dữ liệu từ Sheet (gộp)
 ((await G(V+'Vi!A2:D')).values||[]).forEach(r=>{if(!S.del.includes(r[0])&&!S.wallets.some(w=>w.id===r[0]))S.wallets.push({id:r[0],e:r[1],n:r[2],b:+r[3]||0})});
 ((await G(V+'No!A2:H')).values||[]).forEach(r=>{if(!S.del.includes(r[0])&&!S.debts.some(d=>d.id===r[0]))S.debts.push({id:r[0],p:r[1],k:r[2]==='Cho vay'?'l':'b',a:+r[3],d:r[4],due:r[5]||'',n:r[6]||'',w:r[7]})});
 ((await G(V+'HangMuc!A2:E')).values||[]).forEach(r=>{if(!S.del.includes(r[0])&&!S.cats.some(c=>c.id===r[0]))S.cats.push({id:r[0],e:r[1],n:r[2],t:r[3]==='Chi'?'e':'i',...(r[4]?{p:r[4]}:{})})});
-((await G(V+'GiaoDich!A2:M')).values||[]).forEach(r=>{if(S.del.includes(r[0])||S.tx.some(x=>x.id===r[0]))return;S.tx.push({id:r[0],d:r[1],t:r[2]==='Chi'?'e':'i',c:r[3],a:+r[5],n:r[6]||'',l:r[7]||'',f:r[8]||'',w:r[9]||S.wallets[0].id,...(r[10]?{db:r[10]}:{}),...(r[11]?{pay:1}:{}),...(r[12]?{tr:r[12]}:{})})});
+((await G(V+'GiaoDich!A2:N')).values||[]).forEach(r=>{if(S.del.includes(r[0]))return;const n={id:r[0],d:r[1],t:r[2]==='Chi'?'e':'i',c:r[3],a:+r[5],n:r[6]||'',l:r[7]||'',f:r[8]||'',w:r[9]||S.wallets[0].id,u:+r[13]||0,...(r[10]?{db:r[10]}:{}),...(r[11]?{pay:1}:{}),...(r[12]?{tr:r[12]}:{})},i=S.tx.findIndex(x=>x.id===r[0]);if(i<0)S.tx.push(n);else if(n.u>(S.tx[i].u||0))S.tx[i]=n});
 // đẩy ảnh hoá đơn lên Drive
 for(const x of S.tx){if(x.f)continue;const img=await ig(x.id);if(!img)continue;const b=await(await fetch(img)).blob();
 const body=new Blob([`--B\r\nContent-Type: application/json\r\n\r\n${JSON.stringify({name:x.d+'_'+x.id+'.jpg',parents:[st.fid]})}\r\n--B\r\nContent-Type: image/jpeg\r\n\r\n`,b,'\r\n--B--']);
 const r=await G('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id,webViewLink',{method:'POST',headers:{'Content-Type':'multipart/related; boundary=B'},body});x.f=r.id;x.l=r.webViewLink}
 // ghi lại Sheet
-const rows=[['ID','Ngày','Loại','Mã HM','Hạng mục','Số tiền','Ghi chú','Link hoá đơn','File ID','Mã ví','Mã nợ','Trả nợ','Mã chuyển'],...S.tx.sort((a,b)=>a.d.localeCompare(b.d)).map(x=>[x.id,x.d,x.t==='e'?'Chi':'Thu',x.c,cat(x.c).n,x.a,x.n||'',x.l||'',x.f||'',x.w||'',x.db||'',x.pay?1:'',x.tr||''])];
+const rows=[['ID','Ngày','Loại','Mã HM','Hạng mục','Số tiền','Ghi chú','Link hoá đơn','File ID','Mã ví','Mã nợ','Trả nợ','Mã chuyển','Cập nhật'],...S.tx.sort((a,b)=>a.d.localeCompare(b.d)).map(x=>[x.id,x.d,x.t==='e'?'Chi':'Thu',x.c,cat(x.c).n,x.a,x.n||'',x.l||'',x.f||'',x.w||'',x.db||'',x.pay?1:'',x.tr||'',x.u||0])];
 const cr=[['ID','Emoji','Tên','Loại','Mã cha'],...S.cats.map(c=>[c.id,c.e,c.n,c.t==='e'?'Chi':'Thu',c.p||''])],wr=[['ID','Emoji','Tên ví','Số dư đầu'],...S.wallets.map(w=>[w.id,w.e,w.n,w.b||0])],dr=[['ID','Người','Loại','Số tiền','Ngày','Hạn','Ghi chú','Mã ví'],...S.debts.map(d=>[d.id,d.p,d.k==='l'?'Cho vay':'Đi vay',d.a,d.d,d.due||'',d.n||'',d.w])];
-for(const[n,v]of[['GiaoDich',rows],['HangMuc',cr],['Vi',wr],['No',dr]]){await G(V+n+'!A:M:clear',{method:'POST',json:{}});await G(V+n+'!A1?valueInputOption=RAW',{method:'PUT',json:{values:v}})}
-save();render();toast('Đồng bộ xong ✓')}catch(e){tok=null;toast(typeof e==='string'?e:'Lỗi đồng bộ, kiểm tra Client ID và thử lại');console.error(e)}}
+for(const[n,v]of[['GiaoDich',rows],['HangMuc',cr],['Vi',wr],['No',dr],['Xoa',[['ID'],...S.del.map(i=>[i])]]]){await G(V+n+'!A:N:clear',{method:'POST',json:{}});await G(V+n+'!A1?valueInputOption=RAW',{method:'PUT',json:{values:v}})}
+save();render();toast('Đồng bộ xong ✓ '+S.tx.length+' giao dịch')}catch(e){tok=null;toast(typeof e==='string'?e:'Lỗi đồng bộ: '+String(e.message||e).slice(0,110));console.error(e)}}
 render();
 </script></body></html>
