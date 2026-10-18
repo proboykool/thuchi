@@ -56,7 +56,7 @@ let S=JSON.parse(ST.get(K)||'null')||{tx:[],cats:DEF,set:{},del:[]};
 S.wallets=S.wallets||[{id:'w1',e:'💵',n:'Tiền mặt',b:0}];S.debts=S.debts||[];
 DEF.filter(c=>c.h).forEach(c=>{if(!S.cats.some(x=>x.id===c.id))S.cats.push(c)});S.tx.forEach(x=>{if(!x.w)x.w=S.wallets[0].id;if(x.u===undefined)x.u=0});
 const today=()=>new Date(Date.now()-new Date().getTimezoneOffset()*6e4).toISOString().slice(0,10);
-let tab='l',M=today().slice(0,7),rt='e',cf=null,tok=null,F={},wf='',D={},W={},TR={};
+let tab='l',M=today().slice(0,7),rt='e',cf=null,tok=null,F={},wf='',D={},W={},TR={},CE={};
 const save=()=>{ST.set(K,JSON.stringify(S));if(ST.fail&&!ST.w){ST.w=1;toast('Trình duyệt chặn lưu dữ liệu. Hãy mở file bằng Chrome.')}};
 const fmt=n=>(n||0).toLocaleString('vi-VN')+'₫',esc=s=>String(s||'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const cat=id=>S.cats.find(c=>c.id===id)||{n:'Khác',e:'❓'},tp=id=>cat(id).p||id;
@@ -96,10 +96,20 @@ Object.entries(by).sort((p,q)=>q[1]-p[1]).forEach(([c,v])=>{const p=v/tot*100,sb
 return h}
 function vCat(){const ord=t=>S.cats.filter(c=>c.t===t&&!c.h&&!c.p).flatMap(c=>[c,...S.cats.filter(k=>k.p===c.id)]);
 let h=`<h3>Ví của tôi</h3><div class=grid>${S.wallets.map(w=>`<div class=cc onclick="editW('${w.id}')">${av(w.n)}<small>${esc(w.n)}</small><small>${fmt(balOf(w))}</small></div>`).join('')}<div class=cc onclick="editW()"><i>＋</i><small>Thêm ví</small></div></div>`;
-['e','i'].forEach(t=>{h+=`<h3>${t==='e'?'Khoản chi':'Khoản thu'}</h3><div class=grid>`+ord(t).map(c=>`<div class=cc onclick="delCat('${c.id}')">${av(c.n)}<small>${c.p?'↳ ':''}${esc(c.n)}</small></div>`).join('')+'</div>'});
-return h+`<div class=card><b>Thêm hạng mục</b><div class=row2><input id=cn placeholder="Tên hạng mục"></div><select id=ct><option value=e>Khoản chi<option value=i>Khoản thu</select><select id=cp><option value="">Là hạng mục chính</option>${S.cats.filter(c=>!c.p&&!c.h).map(c=>`<option value="${c.id}">Là con của: ${esc(c.n)}</option>`).join('')}</select><button class=pb style="width:100%" onclick=addCat()>Thêm hạng mục</button><small>Chạm vào hạng mục để xoá. Hạng mục con thừa hưởng loại thu/chi của hạng mục cha.</small></div>`}
-function addCat(){const e='',n=$('#cn').value.trim(),p=$('#cp').value;if(!n)return toast('Nhập tên hạng mục');S.cats.push({id:'c'+Date.now().toString(36),e,n,t:p?cat(p).t:$('#ct').value,...(p?{p}:{})});save();render()}
-function delCat(id){const c=cat(id);if(S.tx.some(x=>x.c===id)||S.cats.some(k=>k.p===id))return toast('Hạng mục đang được dùng, không xoá được');if(confirm('Xoá hạng mục '+c.n+'?')){S.cats=S.cats.filter(x=>x.id!==id);S.del.push(id);save();render()}}
+['e','i'].forEach(t=>{h+=`<h3>${t==='e'?'Khoản chi':'Khoản thu'}</h3><div class=grid>`+ord(t).map(c=>`<div class=cc onclick="editC('${c.id}')">${av(c.n)}<small>${c.p?'↳ ':''}${esc(c.n)}</small></div>`).join('')+'</div>'});
+return h+`<div class=card><b>Thêm hạng mục</b><div class=row2><input id=cn placeholder="Tên hạng mục"></div><select id=ct><option value=e>Khoản chi<option value=i>Khoản thu</select><select id=cp><option value="">Là hạng mục chính</option>${S.cats.filter(c=>!c.p&&!c.h).map(c=>`<option value="${c.id}">Là con của: ${esc(c.n)}</option>`).join('')}</select><button class=pb style="width:100%" onclick=addCat()>Thêm hạng mục</button><small>Chạm vào hạng mục để đổi tên, di chuyển hoặc xoá. Hạng mục con thừa hưởng loại thu/chi của hạng mục cha.</small></div>`}
+function addCat(){const e='',n=$('#cn').value.trim(),p=$('#cp').value;if(!n)return toast('Nhập tên hạng mục');S.cats.push({id:'c'+Date.now().toString(36),e,n,t:p?cat(p).t:$('#ct').value,u:Date.now(),...(p?{p}:{})});save();render()}
+function editC(id){const c=cat(id);CE={id,n:c.n,p:c.p||'',t:c.t};drawC()}
+function drawC(){const kids=S.cats.some(k=>k.p===CE.id);$('#m').className='on';
+$('#m').innerHTML=`<div class=sh><b>Sửa hạng mục</b><input placeholder="Tên hạng mục" value="${esc(CE.n)}" oninput="CE.n=this.value">
+${kids?'<small>Hạng mục này có hạng mục con nên không thể chuyển thành hạng mục con.</small>':`<small>Vị trí</small><select onchange="CE.p=this.value"><option value="">Là hạng mục chính</option>${S.cats.filter(k=>!k.p&&!k.h&&k.t===CE.t&&k.id!==CE.id).map(k=>`<option value="${k.id}" ${CE.p===k.id?'selected':''}>Là con của: ${esc(k.n)}</option>`).join('')}</select>`}
+<div class=row2><button onclick=closeF()>Huỷ</button><button class=dl onclick=askDelC()>Xoá</button><button class=pb onclick=saveC()>Lưu</button></div></div>`}
+function saveC(){const n=CE.n.trim();if(!n)return toast('Nhập tên hạng mục');const c=S.cats.find(x=>x.id===CE.id);c.n=n;if(CE.p)c.p=CE.p;else delete c.p;c.u=Date.now();save();closeF();render()}
+function askDelC(){const id=CE.id,n=S.tx.filter(x=>x.c===id).length,o=S.cats.filter(k=>!k.h&&k.t===CE.t&&k.id!==id);
+if(!n){if(confirm('Xoá hạng mục "'+cat(id).n+'"?'))doDelC(id,'');return}
+if(!o.length)return toast('Cần có hạng mục khác cùng loại để chuyển giao dịch sang');
+$('#m').innerHTML=`<div class=sh><b>Xoá hạng mục “${esc(cat(id).n)}”</b><p>Có ${n} giao dịch đang dùng hạng mục này. Chuyển sang:</p><select id=ct2>${o.map(k=>`<option value="${k.id}">${k.p?esc(cat(k.p).n)+' › ':''}${esc(k.n)}</option>`).join('')}</select><small>Hạng mục con (nếu có) sẽ trở thành hạng mục chính.</small><div class=row2><button onclick="editC('${id}')">Quay lại</button><button class=dl onclick="doDelC('${id}',$('#ct2').value)">Xoá hạng mục</button></div></div>`}
+function doDelC(id,to){const t=Date.now();S.tx.forEach(x=>{if(x.c===id){x.c=to;x.u=t}});S.cats.forEach(k=>{if(k.p===id){delete k.p;k.u=t}});S.cats=S.cats.filter(x=>x.id!==id);S.del.push(id);if(cf===id)cf=null;save();closeF();render()}
 function editW(id){const w=id?S.wallets.find(x=>x.id===id):{id:'',e:'',n:'',b:0};W={...w};$('#m').className='on';$('#m').innerHTML=`<div class=sh><b>${id?'Sửa ví':'Thêm ví'}</b><div class=row2><input placeholder="Tên ví (Tiền mặt, Vietcombank…)" value="${esc(w.n)}" oninput="W.n=this.value"></div><input inputmode=numeric placeholder="Số dư ban đầu (₫)" value="${w.b||''}" oninput="W.b=+this.value.replace(/\\D/g,'')"><div class=row2><button onclick=closeF()>Huỷ</button>${id&&S.wallets.length>1?'<button class=dl onclick=delW()>Xoá</button>':''}<button class=pb onclick=saveW()>Lưu</button></div></div>`}
 function saveW(){if(!W.n.trim())return toast('Nhập tên ví');if(!W.id){W.id='w'+Date.now().toString(36);S.wallets.push(W)}else S.wallets=S.wallets.map(x=>x.id===W.id?W:x);save();closeF();render()}
 function delW(){if(S.tx.some(x=>x.w===W.id)||S.debts.some(d=>d.w===W.id))return toast('Ví đang có giao dịch, không xoá được');S.wallets=S.wallets.filter(x=>x.id!==W.id);S.del.push(W.id);if(wf===W.id)wf='';save();closeF();render()}
@@ -188,11 +198,11 @@ const have=(await G('https://sheets.googleapis.com/v4/spreadsheets/'+st.sid+'?fi
 if(need.length)await G('https://sheets.googleapis.com/v4/spreadsheets/'+st.sid+':batchUpdate',{method:'POST',json:{requests:need.map(title=>({addSheet:{properties:{title}}}))}});
 const V='https://sheets.googleapis.com/v4/spreadsheets/'+st.sid+'/values/';
 ((await G(V+'Xoa!A2:A')).values||[]).forEach(r=>{if(r[0]&&!S.del.includes(r[0]))S.del.push(r[0])});
-S.tx=S.tx.filter(x=>!S.del.includes(x.id));S.debts=S.debts.filter(x=>!S.del.includes(x.id));S.cats=S.cats.filter(x=>!S.del.includes(x.id));{const kw=S.wallets.filter(w=>!S.del.includes(w.id));if(kw.length)S.wallets=kw}
+S.tx=S.tx.filter(x=>!S.del.includes(x.id));S.debts=S.debts.filter(x=>!S.del.includes(x.id));S.cats=S.cats.filter(x=>!S.del.includes(x.id));{const kw=S.wallets.filter(w=>!S.del.includes(w.id));if(kw.length)S.wallets=kw}S.cats.forEach(c=>{if(c.p&&!S.cats.some(k=>k.id===c.p))delete c.p});
 // kéo dữ liệu từ Sheet (gộp)
 ((await G(V+'Vi!A2:D')).values||[]).forEach(r=>{if(!S.del.includes(r[0])&&!S.wallets.some(w=>w.id===r[0]))S.wallets.push({id:r[0],e:r[1],n:r[2],b:+r[3]||0})});
 ((await G(V+'No!A2:H')).values||[]).forEach(r=>{if(!S.del.includes(r[0])&&!S.debts.some(d=>d.id===r[0]))S.debts.push({id:r[0],p:r[1],k:r[2]==='Cho vay'?'l':'b',a:+r[3],d:r[4],due:r[5]||'',n:r[6]||'',w:r[7]})});
-((await G(V+'HangMuc!A2:E')).values||[]).forEach(r=>{if(!S.del.includes(r[0])&&!S.cats.some(c=>c.id===r[0]))S.cats.push({id:r[0],e:r[1],n:r[2],t:r[3]==='Chi'?'e':'i',...(r[4]?{p:r[4]}:{})})});
+((await G(V+'HangMuc!A2:F')).values||[]).forEach(r=>{if(S.del.includes(r[0]))return;const n={id:r[0],e:r[1]||'',n:r[2],t:r[3]==='Chi'?'e':'i',u:+r[5]||0,...(r[4]?{p:r[4]}:{})},i=S.cats.findIndex(c=>c.id===r[0]);if(i<0)S.cats.push(n);else if(n.u>(S.cats[i].u||0))S.cats[i]=n});
 ((await G(V+'GiaoDich!A2:N')).values||[]).forEach(r=>{if(S.del.includes(r[0]))return;const n={id:r[0],d:r[1],t:r[2]==='Chi'?'e':'i',c:r[3],a:+r[5],n:r[6]||'',l:r[7]||'',f:r[8]||'',w:r[9]||S.wallets[0].id,u:+r[13]||0,...(r[10]?{db:r[10]}:{}),...(r[11]?{pay:1}:{}),...(r[12]?{tr:r[12]}:{})},i=S.tx.findIndex(x=>x.id===r[0]);if(i<0)S.tx.push(n);else if(n.u>(S.tx[i].u||0))S.tx[i]=n});
 // đẩy ảnh hoá đơn lên Drive
 for(const x of S.tx){if(x.f)continue;const img=await ig(x.id);if(!img)continue;const b=await(await fetch(img)).blob();
@@ -200,7 +210,7 @@ const body=new Blob([`--B\r\nContent-Type: application/json\r\n\r\n${JSON.string
 const r=await G('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id,webViewLink',{method:'POST',headers:{'Content-Type':'multipart/related; boundary=B'},body});x.f=r.id;x.l=r.webViewLink}
 // ghi lại Sheet
 const rows=[['ID','Ngày','Loại','Mã HM','Hạng mục','Số tiền','Ghi chú','Link hoá đơn','File ID','Mã ví','Mã nợ','Trả nợ','Mã chuyển','Cập nhật'],...S.tx.sort((a,b)=>a.d.localeCompare(b.d)).map(x=>[x.id,x.d,x.t==='e'?'Chi':'Thu',x.c,cat(x.c).n,x.a,x.n||'',x.l||'',x.f||'',x.w||'',x.db||'',x.pay?1:'',x.tr||'',x.u||0])];
-const cr=[['ID','Emoji','Tên','Loại','Mã cha'],...S.cats.map(c=>[c.id,c.e,c.n,c.t==='e'?'Chi':'Thu',c.p||''])],wr=[['ID','Emoji','Tên ví','Số dư đầu'],...S.wallets.map(w=>[w.id,w.e,w.n,w.b||0])],dr=[['ID','Người','Loại','Số tiền','Ngày','Hạn','Ghi chú','Mã ví'],...S.debts.map(d=>[d.id,d.p,d.k==='l'?'Cho vay':'Đi vay',d.a,d.d,d.due||'',d.n||'',d.w])];
+const cr=[['ID','Emoji','Tên','Loại','Mã cha','Cập nhật'],...S.cats.map(c=>[c.id,c.e,c.n,c.t==='e'?'Chi':'Thu',c.p||'',c.u||0])],wr=[['ID','Emoji','Tên ví','Số dư đầu'],...S.wallets.map(w=>[w.id,w.e,w.n,w.b||0])],dr=[['ID','Người','Loại','Số tiền','Ngày','Hạn','Ghi chú','Mã ví'],...S.debts.map(d=>[d.id,d.p,d.k==='l'?'Cho vay':'Đi vay',d.a,d.d,d.due||'',d.n||'',d.w])];
 for(const[n,v]of[['GiaoDich',rows],['HangMuc',cr],['Vi',wr],['No',dr],['Xoa',[['ID'],...S.del.map(i=>[i])]]]){await G(V+n+'!A:N:clear',{method:'POST',json:{}});await G(V+n+'!A1?valueInputOption=RAW',{method:'PUT',json:{values:v}})}
 save();render();$('#gb').classList.remove('spin');toast('Đồng bộ xong ✓ '+S.tx.length+' giao dịch')}catch(e){$('#gb').classList.remove('spin');tok=null;toast(typeof e==='string'?e:'Lỗi đồng bộ: '+String(e.message||e).slice(0,110));console.error(e)}}
 render();
