@@ -135,7 +135,8 @@ function delD(id){if(!confirm('Xoá khoản nợ và mọi giao dịch liên qua
 function vSet(){const s=S.set;return `<div class=card><b>Google (Drive + Sheets)</b><small style="display:block">Client ID OAuth (Web) từ Google Cloud Console.</small><input placeholder="xxxx.apps.googleusercontent.com" value="${esc(s.cid)}" onchange="S.set.cid=this.value.trim();save()">
 <button class=pb style="width:100%" onclick=sync()>☁️ Đồng bộ ngay</button>${s.sid?`<p><a href="https://docs.google.com/spreadsheets/d/${s.sid}" target=_blank>Mở Google Sheet</a></p>`:''}
 <details><summary>Hướng dẫn kết nối Google</summary><ol><li>Vào console.cloud.google.com, tạo Project mới.</li><li>APIs &amp; Services → Library: bật <b>Google Drive API</b> và <b>Google Sheets API</b>.</li><li>Google Auth Platform (OAuth consent screen): chọn External, điền tên ứng dụng và email, thêm email của bạn vào <b>Test users</b>.</li><li>Credentials → Create credentials → OAuth client ID → Web application.</li><li>Authorized JavaScript origins, dán đúng: <b>${location.origin}</b></li><li>Copy Client ID dán vào ô trên, bấm Đồng bộ ngay.</li></ol></details><small>Dữ liệu ghi vào Google Sheet “Sổ Thu Chi”; ảnh hoá đơn lưu trong thư mục Drive “SoThuChi_HoaDon”.</small></div>
-<div class=card><b>AI đọc hoá đơn</b><small style="display:block">Anthropic API key (lưu trong máy của bạn).</small><input type=password placeholder="sk-ant-..." value="${esc(s.ak)}" onchange="S.set.ak=this.value.trim();save()"></div>
+<div class=card><b>AI đọc hoá đơn</b><select onchange="S.set.pv=this.value;save();render()"><option value=g ${pv()==='g'?'selected':''}>Google Gemini (có gói miễn phí)</option><option value=c ${pv()==='c'?'selected':''}>Claude (Anthropic)</option></select>
+${pv()==='c'?`<input type=password placeholder="Anthropic API key (sk-ant-...)" value="${esc(s.ak)}" onchange="S.set.ak=this.value.trim();save()">`:`<input type=password placeholder="Gemini API key (AIza...)" value="${esc(s.gk)}" onchange="S.set.gk=this.value.trim();save()"><input placeholder="Model (mặc định gemini-3.6-flash)" value="${esc(s.gm)}" onchange="S.set.gm=this.value.trim();save()"><small>Lấy key tại aistudio.google.com/apikey. Key lưu trong máy của bạn.</small>`}</div>
 <div class=card><b>Dữ liệu</b><p>${S.tx.length} giao dịch</p><button onclick=csv()>Xuất CSV</button></div>`}
 function csv(){const r=['Ngày,Loại,Hạng mục,Số tiền,Ghi chú',...S.tx.map(x=>[x.d,x.t==='e'?'Chi':'Thu',cat(x.c).n,x.a,'"'+(x.n||'').replace(/"/g,'""')+'"'].join(','))].join('\n');
 const a=document.createElement('a');a.href=URL.createObjectURL(new Blob(['\ufeff'+r],{type:'text/csv'}));a.download='thu-chi.csv';a.click()}
@@ -153,15 +154,20 @@ ${F.c&&S.cats.some(k=>k.p===tp(F.c))?`<small>Hạng mục con</small><div class=
 <input type=date value="${F.d}" onchange="F.d=this.value"><input placeholder="Ghi chú" value="${esc(F.n)}" oninput="F.n=this.value">
 <div class=row2><button onclick=closeF()>Huỷ</button>${F.id?'<button class=dl onclick=delT()>Xoá</button>':''}<button class=pb onclick=saveT()>Lưu</button></div></div>`}
 async function shrink(f){const b=await createImageBitmap(f),k=Math.min(1,1280/Math.max(b.width,b.height)),c=document.createElement('canvas');c.width=b.width*k;c.height=b.height*k;c.getContext('2d').drawImage(b,0,0,c.width,c.height);return c.toDataURL('image/jpeg',.75)}
-async function scan(f){if(!f)return;if(!S.set.ak)return toast('Hãy nhập Anthropic API key ở tab Đồng bộ');
+const pv=()=>S.set.pv||(S.set.ak&&!S.set.gk?'c':'g');
+const PR=n=>`Đọc hoá đơn này. Chỉ trả về JSON: {"amount": tổng thanh toán là số nguyên VND, "date":"YYYY-MM-DD", "merchant":"tên cửa hàng", "category":"chọn đúng một trong: ${n}", "note":"mô tả ngắn các món"}`;
+async function askAI(img,names){const b64=img.split(',')[1];
+if(pv()==='c'){const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'content-type':'application/json','x-api-key':S.set.ak,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:500,messages:[{role:'user',content:[{type:'image',source:{type:'base64',media_type:'image/jpeg',data:b64}},{type:'text',text:PR(names)}]}]})});const j=await r.json();return j.content[0].text}
+for(const m of [S.set.gm||'gemini-3.6-flash','gemini-flash-latest']){const r=await fetch('https://generativelanguage.googleapis.com/v1beta/models/'+m+':generateContent',{method:'POST',headers:{'content-type':'application/json','x-goog-api-key':S.set.gk},body:JSON.stringify({contents:[{parts:[{inline_data:{mime_type:'image/jpeg',data:b64}},{text:PR(names)}]}],generationConfig:{responseMimeType:'application/json'}})});
+if(r.status===404)continue;const j=await r.json();if(!r.ok)throw new Error(j.error&&j.error.message||r.status);return j.candidates[0].content.parts.map(p=>p.text||'').join('')}
+throw new Error('không tìm thấy model Gemini, hãy nhập tên model ở tab Đồng bộ')}
+async function scan(f){if(!f)return;if(!(pv()==='c'?S.set.ak:S.set.gk))return toast('Hãy nhập API key AI ở tab Đồng bộ');
 toast('AI đang đọc hoá đơn…');F.img=await shrink(f);F.imgNew=1;drawF();
 try{const names=S.cats.filter(c=>c.t==='e').map(c=>c.n).join(', ');
-const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'content-type':'application/json','x-api-key':S.set.ak,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
-body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:500,messages:[{role:'user',content:[{type:'image',source:{type:'base64',media_type:'image/jpeg',data:F.img.split(',')[1]}},{type:'text',text:`Đọc hoá đơn này. Chỉ trả về JSON: {"amount": tổng thanh toán là số nguyên VND, "date":"YYYY-MM-DD", "merchant":"tên cửa hàng", "category":"chọn đúng một trong: ${names}", "note":"mô tả ngắn các món"}`}]}]})});
-const j=await r.json(),o=JSON.parse(j.content[0].text.match(/\{[\s\S]*\}/)[0]);
+const o=JSON.parse((await askAI(F.img,names)).match(/\{[\s\S]*\}/)[0]);
 if(o.amount)F.a=+o.amount;if(/^\d{4}-\d\d-\d\d$/.test(o.date))F.d=o.date;F.t='e';
 const c=S.cats.find(c=>c.t==='e'&&c.n===o.category);F.c=c?c.id:'kh';F.n=[o.merchant,o.note].filter(Boolean).join(' - ');
-drawF();toast('Đã tự điền từ hoá đơn ✓')}catch(e){toast('Không đọc được hoá đơn, hãy nhập tay')}}
+drawF();toast('Đã tự điền từ hoá đơn ✓')}catch(e){toast('Không đọc được hoá đơn: '+String(e.message||e).slice(0,90));console.error(e)}}
 async function saveT(){if(!F.a)return toast('Nhập số tiền');if(!F.c)return toast('Chọn hạng mục');
 if(!F.id)F.id=Date.now().toString(36)+Math.random().toString(36).slice(2,5);
 const x={id:F.id,d:F.d,t:F.t,c:F.c,a:F.a,n:F.n,l:F.l,f:F.f,w:F.w};
